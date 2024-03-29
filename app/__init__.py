@@ -85,8 +85,12 @@ class App:
     def start(self):
         """Start the application. Load plugins. Start the REPL loop."""
         self.load_plugins()
-        logging.info("Application started. Type 'exit' to exit.")
+        logging.info("Application started...")
+        logging.info("Welcome to the Calculator. Follwing commands are available:")
+        print('Welcome to the Calculator. Follwing commands are available:')
+        self.command_handler.execute_command('menu')
         print("Type 'exit' to exit.")
+        logging.info("Type 'exit' to exit.")
         while True:  #REPL Read, Evaluate, Print, Loop
             #self.command_handler.execute_command(input(">>> ").strip())
             user_input = input(">>> ").strip()

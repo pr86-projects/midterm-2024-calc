@@ -10,12 +10,10 @@ class MenuCommand(Command):
                     'subtract number1 number2   Subtract two numbers', 
                     'multiply number1 number2   Multiply two numbers', 
                     'divide number1 number2     Divide two numbers', 
-                    'greet                      Greet the user',   
-                    'goodbye                    Say goodbye to the user', 
-                    'discord                    Send something to Discord', 
                     'exit                       Exits the app']  # Replace with the actual list of commands
-        logging.info("Available commands:")
-        print('Available commands:')
+        logging.info("Follwing commands are available:")
+        logging.info('\n'.join(commands))
+        print('Follwing commands are available:')
         for command in commands:
             print(f'- {command}')
         

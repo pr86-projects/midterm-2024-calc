@@ -4,30 +4,12 @@ This module contains tests for the all Commands.
 #import pytest
 import sys
 from app import App
-from app.plugins.discord import DiscordCommand
-from app.plugins.email import EmailCommand
-from app.plugins.goodbye import GoodbyeCommand
-from app.plugins.greet import GreetCommand
 from app.plugins.add import AddCommand
 from app.plugins.menu import MenuCommand
 from app.plugins.subtract import SubtractCommand
 from app.plugins.multiply import MultiplyCommand
 from app.plugins.divide import DivideCommand
 from app.commands import Command, CommandHandler
-
-def test_greet_command(capfd):
-    """This test verifies that the GreetCommand class prints 'Hello, World!' when executed."""
-    command = GreetCommand()
-    command.execute()
-    out, err = capfd.readouterr() # pylint: disable=unused-variable
-    assert out == "Hello, World!\n", "The GreetCommand should print 'Hello, World!'"
-
-def test_goodbye_command(capfd):
-    """This test verifies that the GoodbyeCommand class prints 'Goodbye' when executed. """
-    command = GoodbyeCommand()
-    command.execute()
-    out, err = capfd.readouterr() # pylint: disable=unused-variable
-    assert out == "Goodbye\n", "The GreetCommand should print 'Hello, World!'"
 
 def test_add_command(capfd):
     """This test verifies that the AddCommand class prints 'The result is: 10' when executed."""
@@ -94,34 +76,6 @@ def test_divide_command_invalid_input(capfd):
     captured = capfd.readouterr()
     assert "Please enter a valid number" in captured.out
 
-def test_app_greet_command(capfd, monkeypatch):
-    """Test that the REPL correctly handles the 'greet' command."""
-    # Simulate user entering 'greet' followed by 'exit'
-    inputs = iter(['greet', 'exit'])
-    monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-    app = App()
-    #with pytest.raises(SystemExit) as e:
-    #    app.start()  # Assuming App.start() is now a static method based on previous discussions
-    app.start()
-    captured = capfd.readouterr()
-    #assert str(e.value) == "Hello, World!", "The app did not exit as expected"
-    assert "Hello, World!" in captured.out
-    assert "Exiting application..." in captured.out
-
-def test_discord_command(capfd):
-    """This test verifies that the DiscordCommand class prints 'I WIll send something to discord' when executed. """
-    command = DiscordCommand()
-    command.execute()
-    out, err = capfd.readouterr() # pylint: disable=unused-variable
-    assert out == "I WIll send something to discord\n", "The DiscordCommand should print 'I WIll send something to discord'"
-
-def test_email_command(capfd):
-    """This test verifies that the EmailCommand class prints 'I will email you. """
-    command = EmailCommand()
-    command.execute()
-    out, err = capfd.readouterr() # pylint: disable=unused-variable
-    assert out == "I will email you.\n", "The DiscordCommand should print 'I will email you.'"
-
 def test_app_menu_command(capfd, monkeypatch):
     """Test that the REPL correctly handles the 'greet' command."""
     # Simulate user entering 'greet' followed by 'exit'
@@ -145,14 +99,11 @@ def test_menu_command_output(capfd):
         'subtract number1 number2   Subtract two numbers', 
         'multiply number1 number2   Multiply two numbers', 
         'divide number1 number2     Divide two numbers', 
-        'greet                      Greet the user',   
-        'goodbye                    Say goodbye to the user', 
-        'discord                    Send something to Discord', 
         'exit                       Exits the app'
     ]
     for expected_command in expected_commands:
         assert f'- {expected_command}' in captured.out
-    assert 'Available commands:' in captured.out
+    assert 'Follwing commands are available:' in captured.out
 
 # Create a mock command to use for testing
 class MockCommand(Command):

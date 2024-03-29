@@ -18,8 +18,7 @@ class App:
         os.makedirs('logs', exist_ok=True)
         self.configure_logging()
         load_dotenv()
-        #self.settings = self.load_environment_variables()
-        self.settings = dict(os.environ.items())
+        self.settings = self.load_environment_variables()
         self.settings.setdefault('ENVIRONMENT', 'TESTING')
         self.command_handler = CommandHandler()
         self.exit_event = multiprocessing.Event()  # Initialization of exit_event
@@ -35,8 +34,8 @@ class App:
 
     def load_environment_variables(self):
         """Load environment variables from .env file."""
-        #settings = {key: value for key, value in os.environ.items()}
-        settings = dict(os.environ.items())
+        settings = {key: value for key, value in os.environ.items()}
+        #settings = dict(os.environ.items())
         logging.info("Environment variables loaded.")
         return settings
 

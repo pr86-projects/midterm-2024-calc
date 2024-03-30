@@ -167,3 +167,4 @@ class CsvCommand(Command):
         except IndexError:
             logging.error(f"Index out of range: {idx + 1}.")
             print(f"Index out of range: {idx + 1}. Please provide an index within the history range.")
+            return

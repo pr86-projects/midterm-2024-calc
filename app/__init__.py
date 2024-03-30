@@ -9,17 +9,27 @@ import logging.config
 from dotenv import load_dotenv
 from app.commands import CommandHandler
 from app.commands import Command
+from app.plugins.csv import CsvCommand
+from calculator.calculations import Calculations
 
 class App:
     """App class is the main application class. It initializes the application, loads environment variables, and starts the application."""
-
+    # Make settings a static variable
+    settings = {}
+    max_history=5
     def __init__(self): # Constructor
         """Initialize the application."""
         os.makedirs('logs', exist_ok=True)
-        self.configure_logging()
         load_dotenv()
-        self.settings = self.load_environment_variables()
-        self.settings.setdefault('ENVIRONMENT', 'TESTING')
+        self.configure_logging()
+        #self.settings = self.load_environment_variables()
+        self.load_environment_variables()
+        #self.settings.setdefault('ENVIRONMENT', 'TESTING')
+        logging.info("Environment variables: %s", App.get_environment_variable('ENVIRONMENT'))
+        logging.info("Environment variables: Folder Name: %s", App.get_environment_variable('CALC_HISTORY_PATH'))
+        logging.info("Environment variables: File Name: %s", App.get_environment_variable('FILE_NAME'))
+        self.max_history = int(self.get_environment_variable('MAX_HISTORY'))
+        logging.info("Environment variables: Max History: %s", App.get_environment_variable('MAX_HISTORY'))
         self.command_handler = CommandHandler()
         self.exit_event = multiprocessing.Event()  # Initialization of exit_event
 
@@ -34,14 +44,16 @@ class App:
 
     def load_environment_variables(self):
         """Load environment variables from .env file."""
-        settings = {key: value for key, value in os.environ.items()}
-        #settings = dict(os.environ.items())
+        #settings = {key: value for key, value in os.environ.items()}
+        App.settings = {key: value for key, value in os.environ.items()}
         logging.info("Environment variables loaded.")
-        return settings
-
-    def get_environment_variable(self, env_var: str = 'ENVIRONMENT'):
+        #return settings
+    
+    @staticmethod
+    #def get_environment_variable(self, env_var: str = 'ENVIRONMENT'):
+    def get_environment_variable(env_var: str = 'ENVIRONMENT'):
         """Get the value of the environment variable."""
-        return self.settings.get(env_var, None)
+        return App.settings.get(env_var, None)
 
     def load_plugins(self):
         """Dynamically load all plugins in the plugins directory."""
@@ -65,18 +77,18 @@ class App:
                         logging.error(f"Error importing plugin {plugin_name}: {e}")
 
     def execute_command_in_process(self, command_name: str, *args):
-        """Execute a command in a separate process."""
         if command_name == 'exit':
             self.exit_event.set()  # Directly set the event for the exit command
             logging.info(f"Exit event set by command '{command_name}'.")
             return
         try:
-            #Execute the command in a separate process
-            process = multiprocessing.Process(target=self.command_handler.commands[command_name].execute, args=args)
-            process.start()
-            process.join(timeout=1)  # Wait for a short time for the process to complete
-            if process.is_alive():
-                process.terminate()  # Terminate the process if it's still alive after the timeout
+            # Execute directly in the main process
+            try:
+                self.command_handler.commands[command_name].execute(*args)
+            except KeyError:
+                print(f"No such command: {command_name}")
+                logging.error(f"No such command: {command_name}")
+            return  # Skip creating a new process for these commands
         except KeyError:
             print(f"No such command: {command_name}")
             logging.error(f"No such command: {command_name}")
@@ -84,10 +96,13 @@ class App:
     def start(self):
         """Start the application. Load plugins. Start the REPL loop."""
         self.load_plugins()
+        csv_command = CsvCommand()  # Instantiate your CsvCommand
+        csv_command.load_from_csv()
         logging.info("Application started...")
         logging.info("Welcome to the Calculator. Follwing commands are available:")
         print('Welcome to the Calculator. Follwing commands are available:')
         self.command_handler.execute_command('menu')
+        csv_command.print_sub_commands()
         print("Type 'exit' to exit.")
         logging.info("Type 'exit' to exit.")
         while True:  #REPL Read, Evaluate, Print, Loop
@@ -98,14 +113,11 @@ class App:
             command_parts = user_input.split()
             command = command_parts[0]
             arguments = command_parts[1:]
-
-            #if command == 'exit':  # Handle the 'exit' command directly
-            #    print("Exiting...")
-            #    break  # Break out of the loop to exit the application
-
             self.execute_command_in_process(command, *arguments)
             if self.exit_event.is_set():
                 break  # Exit the loop if the exit event is set
 
         logging.info("Application exit.")
+        #csv_command.save_to_csv()
         print("Exiting application...")  # This line executes after the loop exits
+

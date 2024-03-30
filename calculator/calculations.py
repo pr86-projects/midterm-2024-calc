@@ -12,6 +12,14 @@ class Calculations:
         cls.history.append(calculation)
 
     @classmethod
+    def remove_calculation_by_index(cls, idx: int):
+        """Remove a calculation by its index in the history list."""
+        if 0 <= idx < len(cls.history):
+            del cls.history[idx]
+        else:
+            raise IndexError("Index out of range.")
+
+    @classmethod
     def get_history(cls) -> List[Calculation]:
         """Retrieve the entire history of calculations."""
         return cls.history

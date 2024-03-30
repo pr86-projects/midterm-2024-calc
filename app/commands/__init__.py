@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import logging
 
 class Command(ABC):
     @abstractmethod
@@ -26,4 +27,3 @@ class CommandHandler:
             print(f"No such command: {command_name}")
         except Exception as e:
             print(f"Error executing command {command_name}: {e}") # pragma: no cover
-            

@@ -77,12 +77,7 @@ class App:
                         logging.error(f"Error importing plugin {plugin_name}: {e}")
 
     def execute_command_in_process(self, command_name: str, *args):
-        """Execute a command in a separate process."""
         if command_name == 'exit':
-            #history = Calculations.get_history()
-            #if len(history) > App.max_history:
-            #    print(f"Calculation history is more than {App.max_history}. Please delete some history.")
-            #    return
             self.exit_event.set()  # Directly set the event for the exit command
             logging.info(f"Exit event set by command '{command_name}'.")
             return
@@ -91,6 +86,7 @@ class App:
             try:
                 self.command_handler.commands[command_name].execute(*args)
             except KeyError:
+                print(f"No such command: {command_name}")
                 logging.error(f"No such command: {command_name}")
             return  # Skip creating a new process for these commands
         except KeyError:

@@ -28,6 +28,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Create .env file
+      run: |
+        echo "CALC_HISTORY_PATH=data" >> .env
+        echo "FILE_NAME=calculator_history.csv" >> .env
+        echo "MAX_HISTORY=5" >> .env
+        # Add more environment variables as needed
     - name: Test with pytest --pylint
       run: |
         pytest

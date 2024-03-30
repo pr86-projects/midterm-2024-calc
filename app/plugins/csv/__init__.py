@@ -22,12 +22,12 @@ class CsvCommand(Command):
         self.load_environment_variables()
         #self.data_dir = App.get_environment_variable('CALC_HISTORY_PATH')
         #self.history_file_name = App.get_environment_variable('FILE_NAME')
-        self.data_dir = self.get_environment_variable('CALC_HISTORY_PATH')
+        self.data_dir = self.get_environment_variable('CALC_HISTORY_PATH', 'data')
         logging.info(f"Data directory: {self.data_dir}")
 
-        self.history_file_name = self.get_environment_variable('FILE_NAME')
+        self.history_file_name = self.get_environment_variable('FILE_NAME', 'calculator_history.csv')
         self.history_file_path = os.path.join(self.data_dir, self.history_file_name)
-        self.max_history = int(self.get_environment_variable('MAX_HISTORY',5))
+        self.max_history = int(self.get_environment_variable('MAX_HISTORY','5'))
         logging.info(f"File name: {self.history_file_name}")
         logging.info(f"File Path: {self.history_file_path}")
         # Check if the data directory exists and is writable
@@ -50,7 +50,7 @@ class CsvCommand(Command):
         logging.info("Environment variables loaded.")
 
     @staticmethod
-    def get_environment_variable(env_var: str = 'ENVIRONMENT', default=None):
+    def get_environment_variable(env_var: str, default=None):
         """Get the value of the environment variable."""
         return CsvCommand.settings.get(env_var, None)
 
@@ -167,3 +167,4 @@ class CsvCommand(Command):
         except IndexError:
             logging.error(f"Index out of range: {idx + 1}.")
             print(f"Index out of range: {idx + 1}. Please provide an index within the history range.")
+            return

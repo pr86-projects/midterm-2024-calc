@@ -3,4 +3,5 @@
 .pytest_cache
 *pycache*
 .env
+.csv
 logs

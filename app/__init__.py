@@ -26,10 +26,12 @@ class App:
         self.load_environment_variables()
         #self.settings.setdefault('ENVIRONMENT', 'TESTING')
         logging.info("Environment variables: %s", App.get_environment_variable('ENVIRONMENT'))
-        logging.info("Environment variables: Folder Name: %s", App.get_environment_variable('CALC_HISTORY_PATH'))
-        logging.info("Environment variables: File Name: %s", App.get_environment_variable('FILE_NAME'))
-        self.max_history = int(self.get_environment_variable('MAX_HISTORY'))
-        logging.info("Environment variables: Max History: %s", App.get_environment_variable('MAX_HISTORY'))
+        logging.info("Environment variables: Folder Name: %s", App.get_environment_variable('CALC_HISTORY_PATH', 'data'))
+        logging.info("Environment variables: File Name: %s", App.get_environment_variable('FILE_NAME', 'calculator_history.csv'))
+        
+        self.max_history = int(self.get_environment_variable('MAX_HISTORY', '5'))
+        logging.info("Environment variables: Max History: %s", App.get_environment_variable('MAX_HISTORY', '5'))
+        
         self.command_handler = CommandHandler()
         self.exit_event = multiprocessing.Event()  # Initialization of exit_event
 
@@ -51,7 +53,7 @@ class App:
     
     @staticmethod
     #def get_environment_variable(self, env_var: str = 'ENVIRONMENT'):
-    def get_environment_variable(env_var: str = 'ENVIRONMENT'):
+    def get_environment_variable(env_var: str, default=None):
         """Get the value of the environment variable."""
         return App.settings.get(env_var, None)
 

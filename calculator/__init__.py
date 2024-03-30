@@ -1,3 +1,4 @@
+import string
 from calculator.calculation import Calculation
 from calculator.calculations import Calculations
 from calculator.operations import add, subtract, multiply, divide
@@ -32,3 +33,4 @@ class Calculator:
     def divide(a: Decimal,b: Decimal) -> Decimal:
         # This is a static method that pass the divide function from calculator.operations
         return Calculator._perform_operation(a, b, divide)
+

@@ -51,7 +51,7 @@ class App:
     
     @staticmethod
     #def get_environment_variable(self, env_var: str = 'ENVIRONMENT'):
-    def get_environment_variable(env_var: str = 'ENVIRONMENT'):
+    def get_environment_variable(env_var: str = 'ENVIRONMENT', default=None):
         """Get the value of the environment variable."""
         return App.settings.get(env_var, None)
 
